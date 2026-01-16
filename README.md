@@ -82,14 +82,14 @@ handled automatically.
 Run locally:
 ```bash
 python app_advanced.py
-
+```
 ---
 ## 🖼 Dashboard Preview
 ![Dashboard](assets/dashboard.png)
 
 ---
 
-📈 Example Results
+## 📈 Example Results
 
 Model	ROC-AUC
 LASSO Logistic Regression	~0.68
@@ -102,30 +102,30 @@ XGBoost + PCA	~0.72
 
 ---
 
-⚙️ How to Run the Project
+## ⚙️ How to Run the Project
 
 1. Install dependencies
-
+```bash
 pip install -r requirements.txt
-
+```
 2. Preprocess data
-
+```bash
 python -m src.data_prep \
   --input data/raw/spotify_dataset.csv \
   --output data/processed/spotify_processed.csv
-
+```
 3. Train all models
-
+```bash
 python -m src.train --data data/processed/spotify_processed.csv
-
+```
 4. Evaluate models
-
+```bash
 python -m src.evaluate --data data/processed/spotify_processed.csv
-
+```
 5. Launch the advanced dashboard
-
+```bash
 python app_advanced.py
-
+```
 ---
 
 👤 Team
