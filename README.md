@@ -91,12 +91,11 @@ python app_advanced.py
 
 ## 📈 Example Results
 
-Model	ROC-AUC
-LASSO Logistic Regression	~0.68
-CART + LASSO	~0.71
-Random Forest + LASSO	~0.72
-XGBoost + LASSO	~0.74
-XGBoost + PCA	~0.72
+- **LASSO Logistic Regression**: ROC-AUC ≈ **0.68**
+- **CART + LASSO**: ROC-AUC ≈ **0.71**
+- **Random Forest + LASSO**: ROC-AUC ≈ **0.72**
+- **XGBoost + LASSO**: ROC-AUC ≈ **0.74**
+- **XGBoost + PCA**: ROC-AUC ≈ **0.72**
 
 (Exact results may vary by random seed and train/test split.)
 
