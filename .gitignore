@@ -1,0 +1,22 @@
+# data (keep repo lightweight)
+data/raw/
+data/processed/
+*.csv
+*.parquet
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# notebooks
+.ipynb_checkpoints/
+
+# artifacts
+reports/models/
+reports/*.joblib
+
+# OS
+.DS_Store
