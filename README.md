@@ -130,7 +130,4 @@ python app_advanced.py
 
 👤 Team
 
-Joshua Chen
-Robert Chang
-Jonathan Wu
-Ethan Lam
+Joshua Chen, Robert Chang, Johnathan Wu, Ethan Lam
