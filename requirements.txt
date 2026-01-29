@@ -6,3 +6,6 @@ jupyter
 joblib
 dash
 xgboost
+fastapi
+uvicorn
+pydantic
