@@ -7,11 +7,8 @@ import requests
 
 DATA_PATH = "data/processed/spotify_processed.csv"
 
-# Local default + can be overridden on Render using env var
 API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
-
-# FastAPI route is /predict (not /api/predict)
-API_URL = f"{API_BASE_URL}/predict"
+API_URL = f"{API_BASE_URL}/api/predict"
 
 # Load data to build dropdown options + defaults
 df = pd.read_csv(DATA_PATH)
