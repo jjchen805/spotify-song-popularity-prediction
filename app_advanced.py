@@ -246,9 +246,9 @@ def update_prediction(n_clicks, explicit, track_genre, time_signature, key, mode
             row[k] = v
 
     payload = {
-    "model_choice": model_choice,
-    "threshold": 0.5,
-    "features": row
+        "model_choice": model_choice,
+        "threshold": 0.5,
+        "features": row
     }
 
     try:
@@ -261,4 +261,4 @@ def update_prediction(n_clicks, explicit, track_genre, time_signature, key, mode
     return f"Predicted Popularity Probability: {score:.4f}"
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8050)
+    app.run(debug=True, host="0.0.0.0", port=8000)

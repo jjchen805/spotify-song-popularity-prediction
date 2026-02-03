@@ -11,7 +11,7 @@ from src.utils import load_joblib
 
 MODEL_DIR = Path("reports/models")
 
-# Map model keys -> joblib files (must exist)
+# Map model keys -> joblib files
 MODEL_FILES = {
     "lasso": MODEL_DIR / "lasso.joblib",
     "cart_lasso": MODEL_DIR / "cart_lasso.joblib",
@@ -39,9 +39,16 @@ for c in X_SCHEMA.columns:
         DEFAULT_ROW[c] = str(mode.iloc[0]) if not mode.empty else ""
 
 MODELS = {}
+MODEL_LOAD_ERRORS = {}
+
 for k, p in MODEL_FILES.items():
-    if p.exists():
-        MODELS[k] = load_joblib(p)
+    try:
+        if p.exists():
+            MODELS[k] = load_joblib(p)
+        else:
+            MODEL_LOAD_ERRORS[k] = f"missing file: {p}"
+    except Exception as e:
+        MODEL_LOAD_ERRORS[k] = f"{type(e).__name__}: {e}"
 
 
 class PredictRequest(BaseModel):
@@ -62,7 +69,10 @@ def health():
     return {
         "status": "ok",
         "models_loaded": sorted(MODELS.keys()),
+        "model_load_errors": MODEL_LOAD_ERRORS,
+        "model_dir": str(MODEL_DIR),
         "schema_columns": len(X_SCHEMA.columns),
+        "data_path": str(DATA_PATH),
     }
 
 
