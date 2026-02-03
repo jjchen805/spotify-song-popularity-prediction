@@ -1,27 +1,41 @@
 from __future__ import annotations
 
+import os
+import tempfile
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
+import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from google.cloud import storage
 
-from src.utils import load_joblib
+GCS_BUCKET = os.getenv("GCS_BUCKET", "spotify-model-buck")
+GCS_PREFIX = os.getenv("GCS_PREFIX", "models") 
 
-MODEL_DIR = Path("reports/models")
-
-# Map model keys -> joblib files
 MODEL_FILES = {
-    "lasso": MODEL_DIR / "lasso.joblib",
-    "cart_lasso": MODEL_DIR / "cart_lasso.joblib",
-    "rf_lasso": MODEL_DIR / "rf_lasso.joblib",
-    "xgb_lasso": MODEL_DIR / "xgb_lasso.joblib",
-    "cart_pca": MODEL_DIR / "cart_pca.joblib",
-    "rf_pca": MODEL_DIR / "rf_pca.joblib",
-    "xgb_pca": MODEL_DIR / "xgb_pca.joblib",
+    "lasso": f"{GCS_PREFIX}/lasso.joblib",
+    "cart_lasso": f"{GCS_PREFIX}/cart_lasso.joblib",
+    "rf_lasso": f"{GCS_PREFIX}/rf_lasso.joblib",
+    "xgb_lasso": f"{GCS_PREFIX}/xgb_lasso.joblib",
+    "cart_pca": f"{GCS_PREFIX}/cart_pca.joblib",
+    "rf_pca": f"{GCS_PREFIX}/rf_pca.joblib",
+    "xgb_pca": f"{GCS_PREFIX}/xgb_pca.joblib",
 }
 
+def load_joblib_from_gcs(bucket_name: str, blob_path: str):
+    client = storage.Client.create_anonymous_client()
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+
+    if not blob.exists(client):
+        raise FileNotFoundError(f"GCS missing: gs://{bucket_name}/{blob_path}")
+
+    with tempfile.NamedTemporaryFile(suffix=".joblib", delete=True) as tmp:
+        blob.download_to_filename(tmp.name)
+        return joblib.load(tmp.name)
+    
 # Load processed schema to ensure consistent columns
 DATA_PATH = Path("data/processed/spotify_processed.csv")
 
@@ -41,12 +55,9 @@ for c in X_SCHEMA.columns:
 MODELS = {}
 MODEL_LOAD_ERRORS = {}
 
-for k, p in MODEL_FILES.items():
+for k, blob_path in MODEL_FILES.items():
     try:
-        if p.exists():
-            MODELS[k] = load_joblib(p)
-        else:
-            MODEL_LOAD_ERRORS[k] = f"missing file: {p}"
+        MODELS[k] = load_joblib_from_gcs(GCS_BUCKET, blob_path)
     except Exception as e:
         MODEL_LOAD_ERRORS[k] = f"{type(e).__name__}: {e}"
 
@@ -70,7 +81,9 @@ def health():
         "status": "ok",
         "models_loaded": sorted(MODELS.keys()),
         "model_load_errors": MODEL_LOAD_ERRORS,
-        "model_dir": str(MODEL_DIR),
+        "gcs_bucket": GCS_BUCKET,
+        "gcs_prefix": GCS_PREFIX,
+        "model_files": MODEL_FILES,
         "schema_columns": len(X_SCHEMA.columns),
         "data_path": str(DATA_PATH),
     }
