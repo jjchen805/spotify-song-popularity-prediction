@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import dash
 from dash import dcc, html
@@ -5,7 +6,12 @@ from dash.dependencies import Input, Output, State
 import requests
 
 DATA_PATH = "data/processed/spotify_processed.csv"
-API_URL = "/api/predict"
+
+# Local default + can be overridden on Render using env var
+API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+
+# FastAPI route is /predict (not /api/predict)
+API_URL = f"{API_BASE_URL}/predict"
 
 # Load data to build dropdown options + defaults
 df = pd.read_csv(DATA_PATH)
@@ -249,7 +255,7 @@ def update_prediction(n_clicks, explicit, track_genre, time_signature, key, mode
     }
 
     try:
-        resp = requests.post(API_URL, json=payload, timeout=5)
+        resp = requests.post(API_URL, json=payload, timeout=15)
         resp.raise_for_status()
         score = float(resp.json()["probability"])
     except requests.RequestException as e:
