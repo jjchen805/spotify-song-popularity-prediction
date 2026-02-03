@@ -17,10 +17,10 @@ GCS_PREFIX = os.getenv("GCS_PREFIX", "models")
 MODEL_FILES = {
     "lasso": f"{GCS_PREFIX}/lasso.joblib",
     "cart_lasso": f"{GCS_PREFIX}/cart_lasso.joblib",
-    "rf_lasso": f"{GCS_PREFIX}/rf_lasso.joblib",
+    #"rf_lasso": f"{GCS_PREFIX}/rf_lasso.joblib",
     "xgb_lasso": f"{GCS_PREFIX}/xgb_lasso.joblib",
     "cart_pca": f"{GCS_PREFIX}/cart_pca.joblib",
-    "rf_pca": f"{GCS_PREFIX}/rf_pca.joblib",
+    #"rf_pca": f"{GCS_PREFIX}/rf_pca.joblib",
     "xgb_pca": f"{GCS_PREFIX}/xgb_pca.joblib",
 }
 
