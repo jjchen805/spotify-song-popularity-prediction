@@ -253,11 +253,12 @@ def update_prediction(n_clicks, explicit, track_genre, time_signature, key, mode
 
     try:
         resp = requests.post(API_URL, json=payload, timeout=15)
-        resp.raise_for_status()
+        if not resp.ok:
+            return f"API error {resp.status_code}: {resp.text}"
         score = float(resp.json()["probability"])
     except requests.RequestException as e:
-        return f"API error: {e}"
-
+        return f"API request failed: {e}"
+    
     return f"Predicted Popularity Probability: {score:.4f}"
 
 if __name__ == "__main__":
