@@ -20,3 +20,10 @@ reports/*.joblib
 
 # OS
 .DS_Store
+
+# ignore processed data by default
+data/processed/
+
+# allow the processed dataset needed for deployment/demo
+!data/processed/
+!data/processed/spotify_processed.csv
