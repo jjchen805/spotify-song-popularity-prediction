@@ -7,11 +7,11 @@ import requests
 
 DATA_PATH = "data/processed/spotify_processed.csv"
 
-# When running under Render, PORT is set automatically (and uvicorn binds to it)
-PORT = os.getenv("PORT", "8000")
-
-# Dash callback runs server-side, so call the internal app directly
-API_URL = os.getenv("API_URL", f"http://127.0.0.1:{PORT}/api/predict")
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
+    "https://spotify-song-popularity-prediction.onrender.com"
+)
+API_URL = f"{API_BASE_URL}/api/predict"
 
 # Load data to build dropdown options + defaults
 df = pd.read_csv(DATA_PATH)
@@ -20,10 +20,10 @@ X_full = df.drop(columns=["is_popular"])
 model_options = [
     {"label": "LASSO", "value": "lasso"},
     {"label": "CART + LASSO", "value": "cart_lasso"},
-    {"label": "Random Forest + LASSO", "value": "rf_lasso"},
+    #{"label": "Random Forest + LASSO", "value": "rf_lasso"},
     {"label": "XGBoost + LASSO", "value": "xgb_lasso"},
     {"label": "CART + PCA", "value": "cart_pca"},
-    {"label": "Random Forest + PCA", "value": "rf_pca"},
+    #{"label": "Random Forest + PCA", "value": "rf_pca"},
     {"label": "XGBoost + PCA", "value": "xgb_pca"},
 ]
 
