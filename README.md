@@ -79,14 +79,35 @@ The project includes a Spotify-styled **Dash dashboard** that allows users to:
 All models are loaded as **joblib pipelines**, so preprocessing and inference are
 handled automatically.
 
-Run locally:
+---
+
+## Run Locally
+### 1. Start the API (Terminal 1)
 ```bash
-python app_advanced.py
+.venv/bin/python -m uvicorn api:app --port 8000
+```
+### 2. Start the Dashboard (Terminal 2)
+```bash
+.venv/bin/python app_advanced.py
 ```
 ---
+
+## Deployment (Dash + FastAPI on one URL)
+
+This repo deploys as a single web app:
+
+- Dash UI served at `/`
+- FastAPI served at `/api` (docs at `/api/docs`)
+
+### Local
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+---
+
 ## 🖼 Dashboard Preview
 ![Dashboard](assets/dashboard.png)
-
+![API Docs](assets/api_docs.png)
 ---
 
 ## 📈 Example Results
