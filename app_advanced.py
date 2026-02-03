@@ -2,25 +2,14 @@ import pandas as pd
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
-from src.utils import load_joblib
+import requests
 
 DATA_PATH = "data/processed/spotify_processed.csv"
-MODEL_DIR = "reports/models"
+API_URL = "http://127.0.0.1:8000/predict"
 
 # Load data to build dropdown options + defaults
 df = pd.read_csv(DATA_PATH)
 X_full = df.drop(columns=["is_popular"])
-
-# Load pipelines (each pipeline contains its own preprocessing)
-MODELS = {
-    "lasso": load_joblib("reports/models/lasso.joblib"),
-    "cart_lasso": load_joblib("reports/models/cart_lasso.joblib"),
-    "rf_lasso": load_joblib("reports/models/rf_lasso.joblib"),
-    "xgb_lasso": load_joblib("reports/models/xgb_lasso.joblib"),
-    "cart_pca": load_joblib("reports/models/cart_pca.joblib"),
-    "rf_pca": load_joblib("reports/models/rf_pca.joblib"),
-    "xgb_pca": load_joblib("reports/models/xgb_pca.joblib"),
-}
 
 model_options = [
     {"label": "LASSO", "value": "lasso"},
@@ -253,13 +242,19 @@ def update_prediction(n_clicks, explicit, track_genre, time_signature, key, mode
         if k in X_full.columns:
             row[k] = v
 
-    X_one = pd.DataFrame([row], columns=X_full.columns)
+    payload = {
+    "model_choice": model_choice,
+    "threshold": 0.5,
+    "features": row
+    }
 
-    model = MODELS.get(model_choice)
-    if model is None:
-        return "Invalid model choice."
+    try:
+        resp = requests.post(API_URL, json=payload, timeout=5)
+        resp.raise_for_status()
+        score = float(resp.json()["probability"])
+    except requests.RequestException as e:
+        return f"API error: {e}"
 
-    score = float(model.predict_proba(X_one)[:, 1][0])
     return f"Predicted Popularity Probability: {score:.4f}"
 
 if __name__ == "__main__":
