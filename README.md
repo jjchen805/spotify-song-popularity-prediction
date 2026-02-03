@@ -4,6 +4,7 @@ An end-to-end machine learning project that predicts whether a song will be **po
 (top quantile of Spotify popularity) using audio features and metadata.
 The project compares multiple modeling strategies and includes an interactive,
 Spotify-styled dashboard for real-time inference.
+Check out the [dashboard](https://spotify-song-popularity-prediction.onrender.com/predict)!
 
 ---
 
